@@ -1,6 +1,11 @@
 A list of things that would be nice to have
 - Better diagnostics in case the server does not start
 - Sonic Pi help
+  - Add Sonic Pi function's arg suggestion (e.g. trigger when space tab pressed
+  - Code help system should be more simplify...
+  - Add synth help (done)
+  - Add fx help
+  - Add 
 - Colorize output panel (log and cues), if possible
 - Syntax highlight synths and FX
 - I18n
