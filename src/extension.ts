@@ -31,6 +31,7 @@
 import * as vscode from 'vscode';
 
 import { Main } from './main';
+import { SonicPiLanguageHelpProvider } from './codehelp';
 
 export function activate(context: vscode.ExtensionContext) {
     console.log('Ruby detected. Sonic Pi editor extension active!');
@@ -38,6 +39,8 @@ export function activate(context: vscode.ExtensionContext) {
     let main = new Main();
 
     main.checkSonicPiPath();
+
+    const hoveAndMarkdownProvider = new SonicPiLanguageHelpProvider(context.extensionPath);
 
     let config = vscode.workspace.getConfiguration('sonicpieditor');
     if (config.launchSonicPiServerAutomatically === 'start'){
@@ -50,6 +53,12 @@ export function activate(context: vscode.ExtensionContext) {
     // some initial fun...
     let disposable = vscode.commands.registerCommand('sonicpieditor.startserver', () => {
         main.startServer();
+    });
+
+    // enable to auto completion and hover suggestion
+    [vscode.languages.registerHoverProvider, vscode.languages.registerCompletionItemProvider]
+        .forEach((regFunc:((selector:any, provider:any) => void)) => {
+        regFunc({scheme:"*", pattern: '**/*.rb'}, hoveAndMarkdownProvider);
     });
 
     disposable = vscode.commands.registerTextEditorCommand('sonicpieditor.run', (textEditor) => {
@@ -148,6 +157,7 @@ export function activate(context: vscode.ExtensionContext) {
     });
 
     context.subscriptions.push(disposable);
+    context.subscriptions.push(...hoveAndMarkdownProvider.createCommands());
 }
 
 // this method is called when your extension is deactivated
